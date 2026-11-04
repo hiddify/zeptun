@@ -1,23 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="440" height="178" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="12">
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="98" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="12">
 <rect width="100%" height="100%" fill="#ffffff"/>
 <text x="12" y="20" font-size="13" font-weight="600" fill="#0f172a">Throughput, 10 streams through SOCKS5</text>
 <text x="12" y="36" font-size="11" fill="#64748b">GitHub-hosted runner &#183; higher is better</text>
 <text x="120" y="58" text-anchor="end" font-size="11" fill="#475569">zeptun</text>
-<rect x="128" y="46" width="66" height="13" rx="2" fill="#2563eb"/>
-<text x="202" y="59" font-size="11" fill="#0f172a">22.8 Gbit/s</text>
-<text x="120" y="78" text-anchor="end" font-size="11" fill="#475569">sing-box gvisor</text>
-<rect x="128" y="66" width="238" height="13" rx="2" fill="#94a3b8"/>
-<text x="374" y="79" font-size="11" fill="#0f172a">81.7 Gbit/s</text>
-<text x="120" y="98" text-anchor="end" font-size="11" fill="#475569">hev-socks5-tunnel</text>
-<rect x="128" y="86" width="64" height="13" rx="2" fill="#94a3b8"/>
-<text x="200" y="99" font-size="11" fill="#0f172a">22.0 Gbit/s</text>
-<text x="120" y="118" text-anchor="end" font-size="11" fill="#475569">sing-box native</text>
-<rect x="128" y="106" width="47" height="13" rx="2" fill="#94a3b8"/>
-<text x="183" y="119" font-size="11" fill="#0f172a">16.5 Gbit/s</text>
-<text x="120" y="138" text-anchor="end" font-size="11" fill="#475569">tun2socks</text>
-<rect x="128" y="126" width="21" height="13" rx="2" fill="#94a3b8"/>
-<text x="157" y="139" font-size="11" fill="#0f172a">7.5 Gbit/s</text>
-<text x="120" y="158" text-anchor="end" font-size="11" fill="#475569">sing-box system</text>
-<rect x="128" y="146" width="12" height="13" rx="2" fill="#94a3b8"/>
-<text x="148" y="159" font-size="11" fill="#0f172a">4.4 Gbit/s</text>
+<rect x="128" y="46" width="238" height="13" rx="2" fill="#2563eb"/>
+<text x="374" y="59" font-size="11" fill="#0f172a">33.8 Gbit/s</text>
+<text x="120" y="78" text-anchor="end" font-size="11" fill="#475569">sing-box native</text>
+<rect x="128" y="66" width="175" height="13" rx="2" fill="#94a3b8"/>
+<text x="311" y="79" font-size="11" fill="#0f172a">24.9 Gbit/s</text>
 </svg>
