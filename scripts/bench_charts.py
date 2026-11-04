@@ -3,7 +3,7 @@ import os
 import statistics
 import sys
 
-PALETTE = ["#2563eb", "#64748b", "#0f766e", "#b45309", "#7c3aed", "#be123c"]
+PALETTE = ["#2563eb", "#64748b", "#0f766e", "#b45309", "#7c3aed", "#be123c", "#0891b2"]
 BAR = 18
 GAP = 6
 GROUP_GAP = 18
@@ -155,12 +155,13 @@ NAMES = {
     "hev": "hev-socks5-tunnel",
     "singbox-system": "sing-box system",
     "singbox-gvisor": "sing-box gvisor",
+    "singbox-native": "sing-box native",
     "tun2socks": "tun2socks",
 }
 
 
 def summary(rows, out_dir, dest):
-    wanted = ["zeptun-userspace", "hev", "singbox-system", "singbox-gvisor", "tun2socks"]
+    wanted = ["zeptun-userspace", "hev", "singbox-native", "singbox-system", "singbox-gvisor", "tun2socks"]
 
     def rank(scenario, pick, reverse=True):
         values = {}

@@ -106,8 +106,12 @@ start_engine() {
             ;;
         singbox-*)
             [ -n "$SINGBOX" ] || return 1
-            stack=${engine#singbox-}
-            printf '{"log":{"level":"error"},"inbounds":[{"type":"tun","tag":"tun-in","interface_name":"sb0","address":["172.18.0.1/30"],"mtu":%s,"auto_route":false,"stack":"%s"}],"outbounds":[{"type":"socks","tag":"proxy","server":"%s","server_port":1080}],"route":{"final":"proxy"}}' "$MTU" "$stack" "$VETH_SERVER" > "$OUT_DIR/singbox.json"
+            # singbox-native leaves stack out, so sing-tun uses its own TCP/IP stack (sing-box 1.15+)
+            case "${engine#singbox-}" in
+                native) stack= ;;
+                *) stack=",\"stack\":\"${engine#singbox-}\"" ;;
+            esac
+            printf '{"log":{"level":"error"},"inbounds":[{"type":"tun","tag":"tun-in","interface_name":"sb0","address":["172.18.0.1/30"],"mtu":%s,"auto_route":false%s}],"outbounds":[{"type":"socks","tag":"proxy","server":"%s","server_port":1080}],"route":{"final":"proxy"}}' "$MTU" "$stack" "$VETH_SERVER" > "$OUT_DIR/singbox.json"
             "$SINGBOX" run -c "$OUT_DIR/singbox.json" > "$OUT_DIR/$engine.log" 2>&1 &
             ENGINE_PIDS=$!
             for _ in $(seq 1 50); do ip -o link show sb0 2> /dev/null | grep -q UP && break; sleep 0.1; done
