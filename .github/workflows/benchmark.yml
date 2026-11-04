@@ -23,8 +23,15 @@ on:
         description: Commit the charts to docs/bench
         type: boolean
         default: true
-  schedule:
-    - cron: "0 4 * * 0"
+  push:
+    branches: [main]
+    paths-ignore:
+      - docs/bench/**
+      - docs/wiki/Benchmarks.md
+
+concurrency:
+  group: benchmark
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -149,7 +156,7 @@ jobs:
             docs/bench
 
       - name: publish charts
-        if: ${{ github.event_name == 'schedule' || inputs.publish }}
+        if: ${{ github.event_name == 'push' || inputs.publish }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
