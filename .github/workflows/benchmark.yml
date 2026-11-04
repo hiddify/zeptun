@@ -19,6 +19,14 @@ on:
         description: Idle seconds before the second memory reading
         type: string
         default: "5"
+      zeptun_version:
+        description: Noisemux/zeptun release tag, empty for the latest
+        type: string
+        default: ""
+      singbox_version:
+        description: sing-box release tag, empty for the latest 1.15.0 alpha
+        type: string
+        default: ""
       publish:
         description: Commit the charts to docs/bench
         type: boolean
@@ -63,35 +71,45 @@ jobs:
           } > bench-results/runner.md
           cat bench-results/runner.md
 
-      - name: peer engines
+      - name: engines
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ZEPTUN_TAG: ${{ inputs.zeptun_version }}
+          SINGBOX_TAG: ${{ inputs.singbox_version }}
         run: |
           sudo apt-get update
-          sudo apt-get install -y iperf3 build-essential git python3 unzip
-          git clone --depth 1 --recursive https://github.com/heiher/hev-socks5-tunnel "$RUNNER_TEMP/hev-socks5-tunnel"
-          make -C "$RUNNER_TEMP/hev-socks5-tunnel" -j"$(nproc)"
+          sudo apt-get install -y iperf3 build-essential git python3
           git clone --depth 1 --recursive https://github.com/heiher/hev-socks5-server "$RUNNER_TEMP/hev-socks5-server"
           make -C "$RUNNER_TEMP/hev-socks5-server" -j"$(nproc)"
-          curl -sSL -o "$RUNNER_TEMP/t2s.zip" https://github.com/xjasonlyu/tun2socks/releases/download/v2.7.0/tun2socks-linux-amd64.zip
-          unzip -o "$RUNNER_TEMP/t2s.zip" -d "$RUNNER_TEMP/tun2socks"
-          chmod +x "$RUNNER_TEMP/tun2socks/tun2socks-linux-amd64"
-          curl -sSL https://github.com/SagerNet/sing-box/releases/download/v1.15.0-alpha.13/sing-box-1.15.0-alpha.13-linux-amd64.tar.gz | tar xz -C "$RUNNER_TEMP"
+          # zeptun is the release binary of the original repository, not a build of this fork
+          [ -n "$ZEPTUN_TAG" ] || ZEPTUN_TAG=$(gh release view -R Noisemux/zeptun --json tagName -q .tagName)
+          mkdir -p "$RUNNER_TEMP/zeptun"
+          gh release download "$ZEPTUN_TAG" -R Noisemux/zeptun -D "$RUNNER_TEMP/zeptun" -p zeptun-linux-x86_64 -p SHA256SUMS
+          (cd "$RUNNER_TEMP/zeptun" && grep ' zeptun-linux-x86_64$' SHA256SUMS | sha256sum -c -)
+          chmod +x "$RUNNER_TEMP/zeptun/zeptun-linux-x86_64"
+          [ -n "$SINGBOX_TAG" ] || SINGBOX_TAG=$(gh release list -R SagerNet/sing-box -L 50 --json tagName -q '[.[].tagName | select(startswith("v1.15.0-alpha."))] | first')
+          curl -fsSL "https://github.com/SagerNet/sing-box/releases/download/$SINGBOX_TAG/sing-box-${SINGBOX_TAG#v}-linux-amd64.tar.gz" | tar xz -C "$RUNNER_TEMP"
+          {
+            echo "ZEPTUN=$RUNNER_TEMP/zeptun/zeptun-linux-x86_64"
+            echo "SINGBOX=$RUNNER_TEMP/sing-box-${SINGBOX_TAG#v}-linux-amd64/sing-box"
+          } >> "$GITHUB_ENV"
+          printf '| zeptun | %s (Noisemux/zeptun release) |\n| sing-box | %s (sing-tun stack) |\n' "$ZEPTUN_TAG" "$SINGBOX_TAG" >> bench-results/runner.md
+          cat bench-results/runner.md
 
       - name: allow unprivileged namespaces
         run: |
           sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
           sudo modprobe tun || true
 
-      - name: build
+      # only zeptun-bench, the load generator, is used from this build
+      - name: load generator
         run: zig build -Doptimize=fast
 
       - name: throughput, latency and udp
         env:
-          HEV: ${{ runner.temp }}/hev-socks5-tunnel/bin/hev-socks5-tunnel
-          TUN2SOCKS: ${{ runner.temp }}/tun2socks/tun2socks-linux-amd64
-          SINGBOX: ${{ runner.temp }}/sing-box-1.15.0-alpha.13-linux-amd64/sing-box
           SOCKS_SERVER: ${{ runner.temp }}/hev-socks5-server/bin/hev-socks5-server
           IPERF3: /usr/bin/iperf3
-          ENGINES: zeptun-userspace hev zeptun-hybrid singbox-native singbox-system tun2socks singbox-gvisor
+          ENGINES: zeptun-userspace zeptun-hybrid singbox-native
           SCENARIOS: tcp-up-1 tcp-up-10 tcp-down-1 tcp-down-10 rr rr-8x1k crr udp-100k udp-gso-100k
           DURATION: ${{ inputs.duration || '8' }}
           REPEAT: ${{ inputs.repeat || '2' }}
@@ -102,11 +120,8 @@ jobs:
 
       - name: footprint
         env:
-          HEV: ${{ runner.temp }}/hev-socks5-tunnel/bin/hev-socks5-tunnel
-          TUN2SOCKS: ${{ runner.temp }}/tun2socks/tun2socks-linux-amd64
-          SINGBOX: ${{ runner.temp }}/sing-box-1.15.0-alpha.13-linux-amd64/sing-box
           SOCKS_SERVER: ${{ runner.temp }}/hev-socks5-server/bin/hev-socks5-server
-          ENGINES: zeptun hev singbox-native singbox-system singbox-gvisor tun2socks
+          ENGINES: zeptun singbox-native
           TESTS: tcp:1000 udp:1000
           OUT_DIR: footprint-results
         run: sh scripts/footprint_netns.sh
@@ -120,7 +135,7 @@ jobs:
             printf '## Machine\n\n'
             cat bench-results/runner.md
             printf '\n## Method\n\n'
-            printf 'Two network namespaces joined by a veth pair. Traffic enters the tunnel device (MTU 8500), leaves through the same SOCKS5 server (hev-socks5-server) for every engine, and reaches the servers in the second namespace. Engines are interleaved: each round starts every engine once and runs every scenario against it, so background noise spreads evenly. CPU comes from `/proc/<pid>/stat` and memory from `VmRSS`, summed over all processes of an engine.\n\n'
+            printf 'zeptun is the latest release binary of Noisemux/zeptun, and sing-box is the latest 1.15.0 alpha with no tun `stack` option, so it runs on sing-tun'"'"'s own TCP/IP stack. Two network namespaces joined by a veth pair. Traffic enters the tunnel device (MTU 8500), leaves through the same SOCKS5 server (hev-socks5-server) for both engines, and reaches the servers in the second namespace. Engines are interleaved: each round starts every engine once and runs every scenario against it, so background noise spreads evenly. CPU comes from `/proc/<pid>/stat` and memory from `VmRSS`, summed over all processes of an engine.\n\n'
             printf 'Duration %s s per scenario, %s rounds, %s queues. Memory is read twice: the highest sample while the scenario runs, and again after %s s of idle, which shows whether an engine gives the memory back.\n\n' "${DURATION}" "${REPEAT}" "${QUEUES}" "${SETTLE}"
             printf '## Throughput\n\n![throughput](throughput.svg)\n\n'
             printf '## CPU\n\n![cpu](cpu.svg)\n\n'

@@ -13,7 +13,7 @@ def section(name):
 
 page = f"""# Benchmarks
 
-Every number here is produced by the `benchmark` workflow in the repository, on a GitHub-hosted runner, against hev-socks5-tunnel, sing-box and tun2socks over the same SOCKS5 server.
+Every number here is produced by the `benchmark` workflow in the repository, on a GitHub-hosted runner, comparing the latest zeptun release with sing-box 1.15 on its own TCP/IP stack, over the same SOCKS5 server.
 
 ## Machine
 
@@ -68,7 +68,7 @@ engine hands the memory back or keeps it for the life of the process.
 ## Reproducing
 
 ```sh
-gh workflow run benchmark.yml --repo Noisemux/zeptun -f duration=8 -f repeat=2
+gh workflow run benchmark.yml --repo hiddify/zeptun -f duration=8 -f repeat=2
 ```
 """
 
