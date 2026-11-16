@@ -1,45 +1,57 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="920" height="520" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="13">
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="616" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-size="13">
 <rect width="100%" height="100%" fill="#ffffff"/>
 <text x="16" y="24" font-size="15" font-weight="600" fill="#0f172a">Throughput through a SOCKS5 proxy</text>
 <text x="16" y="42" font-size="12" fill="#64748b">median of the repeats &#183; higher is better</text>
 <text x="16" y="68" font-size="12" font-weight="600" fill="#334155">tcp-up-1</text>
 <text x="142" y="90" text-anchor="end" font-size="12" fill="#475569">zeptun-hybrid</text>
-<rect x="150" y="76" width="361" height="16" rx="3" fill="#2563eb"/>
-<text x="519" y="90" font-size="12" fill="#0f172a">17.97 Gbit/s</text>
+<rect x="150" y="76" width="343" height="16" rx="3" fill="#2563eb"/>
+<text x="501" y="90" font-size="12" fill="#0f172a">15.05 Gbit/s</text>
 <text x="142" y="114" text-anchor="end" font-size="12" fill="#475569">zeptun-userspace</text>
-<rect x="150" y="100" width="572" height="16" rx="3" fill="#64748b"/>
-<text x="730" y="114" font-size="12" fill="#0f172a">28.48 Gbit/s</text>
-<text x="142" y="138" text-anchor="end" font-size="12" fill="#475569">singbox-native</text>
-<rect x="150" y="124" width="596" height="16" rx="3" fill="#0f766e"/>
-<text x="754" y="138" font-size="12" fill="#0f172a">29.66 Gbit/s</text>
-<text x="16" y="178" font-size="12" font-weight="600" fill="#334155">tcp-up-10</text>
-<text x="142" y="200" text-anchor="end" font-size="12" fill="#475569">zeptun-hybrid</text>
-<rect x="150" y="186" width="606" height="16" rx="3" fill="#2563eb"/>
-<text x="764" y="200" font-size="12" fill="#0f172a">30.16 Gbit/s</text>
-<text x="142" y="224" text-anchor="end" font-size="12" fill="#475569">zeptun-userspace</text>
-<rect x="150" y="210" width="680" height="16" rx="3" fill="#64748b"/>
-<text x="838" y="224" font-size="12" fill="#0f172a">33.84 Gbit/s</text>
-<text x="142" y="248" text-anchor="end" font-size="12" fill="#475569">singbox-native</text>
-<rect x="150" y="234" width="500" height="16" rx="3" fill="#0f766e"/>
-<text x="658" y="248" font-size="12" fill="#0f172a">24.93 Gbit/s</text>
-<text x="16" y="288" font-size="12" font-weight="600" fill="#334155">tcp-down-1</text>
-<text x="142" y="310" text-anchor="end" font-size="12" fill="#475569">zeptun-hybrid</text>
-<rect x="150" y="296" width="368" height="16" rx="3" fill="#2563eb"/>
-<text x="526" y="310" font-size="12" fill="#0f172a">18.32 Gbit/s</text>
-<text x="142" y="334" text-anchor="end" font-size="12" fill="#475569">zeptun-userspace</text>
-<rect x="150" y="320" width="391" height="16" rx="3" fill="#64748b"/>
-<text x="549" y="334" font-size="12" fill="#0f172a">19.48 Gbit/s</text>
-<text x="142" y="358" text-anchor="end" font-size="12" fill="#475569">singbox-native</text>
-<rect x="150" y="344" width="359" height="16" rx="3" fill="#0f766e"/>
-<text x="517" y="358" font-size="12" fill="#0f172a">17.90 Gbit/s</text>
-<text x="16" y="398" font-size="12" font-weight="600" fill="#334155">tcp-down-10</text>
-<text x="142" y="420" text-anchor="end" font-size="12" fill="#475569">zeptun-hybrid</text>
-<rect x="150" y="406" width="661" height="16" rx="3" fill="#2563eb"/>
-<text x="819" y="420" font-size="12" fill="#0f172a">32.92 Gbit/s</text>
-<text x="142" y="444" text-anchor="end" font-size="12" fill="#475569">zeptun-userspace</text>
-<rect x="150" y="430" width="667" height="16" rx="3" fill="#64748b"/>
-<text x="825" y="444" font-size="12" fill="#0f172a">33.24 Gbit/s</text>
-<text x="142" y="468" text-anchor="end" font-size="12" fill="#475569">singbox-native</text>
-<rect x="150" y="454" width="336" height="16" rx="3" fill="#0f766e"/>
-<text x="494" y="468" font-size="12" fill="#0f172a">16.73 Gbit/s</text>
+<rect x="150" y="100" width="558" height="16" rx="3" fill="#64748b"/>
+<text x="716" y="114" font-size="12" fill="#0f172a">24.48 Gbit/s</text>
+<text x="142" y="138" text-anchor="end" font-size="12" fill="#475569">hiddify-native</text>
+<rect x="150" y="124" width="561" height="16" rx="3" fill="#0f766e"/>
+<text x="719" y="138" font-size="12" fill="#0f172a">24.60 Gbit/s</text>
+<text x="142" y="162" text-anchor="end" font-size="12" fill="#475569">singbox-native</text>
+<rect x="150" y="148" width="547" height="16" rx="3" fill="#b45309"/>
+<text x="705" y="162" font-size="12" fill="#0f172a">24.01 Gbit/s</text>
+<text x="16" y="202" font-size="12" font-weight="600" fill="#334155">tcp-up-10</text>
+<text x="142" y="224" text-anchor="end" font-size="12" fill="#475569">zeptun-hybrid</text>
+<rect x="150" y="210" width="567" height="16" rx="3" fill="#2563eb"/>
+<text x="725" y="224" font-size="12" fill="#0f172a">24.88 Gbit/s</text>
+<text x="142" y="248" text-anchor="end" font-size="12" fill="#475569">zeptun-userspace</text>
+<rect x="150" y="234" width="644" height="16" rx="3" fill="#64748b"/>
+<text x="802" y="248" font-size="12" fill="#0f172a">28.24 Gbit/s</text>
+<text x="142" y="272" text-anchor="end" font-size="12" fill="#475569">hiddify-native</text>
+<rect x="150" y="258" width="460" height="16" rx="3" fill="#0f766e"/>
+<text x="618" y="272" font-size="12" fill="#0f172a">20.20 Gbit/s</text>
+<text x="142" y="296" text-anchor="end" font-size="12" fill="#475569">singbox-native</text>
+<rect x="150" y="282" width="466" height="16" rx="3" fill="#b45309"/>
+<text x="624" y="296" font-size="12" fill="#0f172a">20.47 Gbit/s</text>
+<text x="16" y="336" font-size="12" font-weight="600" fill="#334155">tcp-down-1</text>
+<text x="142" y="358" text-anchor="end" font-size="12" fill="#475569">zeptun-hybrid</text>
+<rect x="150" y="344" width="357" height="16" rx="3" fill="#2563eb"/>
+<text x="515" y="358" font-size="12" fill="#0f172a">15.68 Gbit/s</text>
+<text x="142" y="382" text-anchor="end" font-size="12" fill="#475569">zeptun-userspace</text>
+<rect x="150" y="368" width="328" height="16" rx="3" fill="#64748b"/>
+<text x="486" y="382" font-size="12" fill="#0f172a">14.41 Gbit/s</text>
+<text x="142" y="406" text-anchor="end" font-size="12" fill="#475569">hiddify-native</text>
+<rect x="150" y="392" width="311" height="16" rx="3" fill="#0f766e"/>
+<text x="469" y="406" font-size="12" fill="#0f172a">13.66 Gbit/s</text>
+<text x="142" y="430" text-anchor="end" font-size="12" fill="#475569">singbox-native</text>
+<rect x="150" y="416" width="307" height="16" rx="3" fill="#b45309"/>
+<text x="465" y="430" font-size="12" fill="#0f172a">13.47 Gbit/s</text>
+<text x="16" y="470" font-size="12" font-weight="600" fill="#334155">tcp-down-10</text>
+<text x="142" y="492" text-anchor="end" font-size="12" fill="#475569">zeptun-hybrid</text>
+<rect x="150" y="478" width="680" height="16" rx="3" fill="#2563eb"/>
+<text x="838" y="492" font-size="12" fill="#0f172a">29.81 Gbit/s</text>
+<text x="142" y="516" text-anchor="end" font-size="12" fill="#475569">zeptun-userspace</text>
+<rect x="150" y="502" width="636" height="16" rx="3" fill="#64748b"/>
+<text x="794" y="516" font-size="12" fill="#0f172a">27.89 Gbit/s</text>
+<text x="142" y="540" text-anchor="end" font-size="12" fill="#475569">hiddify-native</text>
+<rect x="150" y="526" width="266" height="16" rx="3" fill="#0f766e"/>
+<text x="424" y="540" font-size="12" fill="#0f172a">11.68 Gbit/s</text>
+<text x="142" y="564" text-anchor="end" font-size="12" fill="#475569">singbox-native</text>
+<rect x="150" y="550" width="266" height="16" rx="3" fill="#b45309"/>
+<text x="424" y="564" font-size="12" fill="#0f172a">11.67 Gbit/s</text>
 </svg>
