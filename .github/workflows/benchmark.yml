@@ -27,6 +27,10 @@ on:
         description: sing-box release tag, empty for the latest 1.15.0 alpha
         type: string
         default: ""
+      hiddify_version:
+        description: hiddify-core release tag, empty for the latest
+        type: string
+        default: v5.9.8
       publish:
         description: Commit the charts to docs/bench
         type: boolean
@@ -76,6 +80,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           ZEPTUN_TAG: ${{ inputs.zeptun_version }}
           SINGBOX_TAG: ${{ inputs.singbox_version }}
+          # a push has no inputs: pin the hiddify-core release there too
+          HIDDIFY_TAG: ${{ github.event_name == 'push' && 'v5.9.8' || inputs.hiddify_version }}
         run: |
           sudo apt-get update
           sudo apt-get install -y iperf3 build-essential git python3
@@ -89,11 +95,16 @@ jobs:
           chmod +x "$RUNNER_TEMP/zeptun/zeptun-linux-x86_64"
           [ -n "$SINGBOX_TAG" ] || SINGBOX_TAG=$(gh release list -R SagerNet/sing-box -L 50 --json tagName -q '[.[].tagName | select(startswith("v1.15.0-alpha."))] | first')
           curl -fsSL "https://github.com/SagerNet/sing-box/releases/download/$SINGBOX_TAG/sing-box-${SINGBOX_TAG#v}-linux-amd64.tar.gz" | tar xz -C "$RUNNER_TEMP"
+          # hiddify-core is the release CLI; it runs a sing-box config with "srun" and keeps libcronet.so beside it
+          [ -n "$HIDDIFY_TAG" ] || HIDDIFY_TAG=$(gh release view -R hiddify/hiddify-core --json tagName -q .tagName)
+          gh release download "$HIDDIFY_TAG" -R hiddify/hiddify-core -D "$RUNNER_TEMP" -p hiddify-core-linux-amd64.tar.gz
+          tar xzf "$RUNNER_TEMP/hiddify-core-linux-amd64.tar.gz" -C "$RUNNER_TEMP"
           {
             echo "ZEPTUN=$RUNNER_TEMP/zeptun/zeptun-linux-x86_64"
             echo "SINGBOX=$RUNNER_TEMP/sing-box-${SINGBOX_TAG#v}-linux-amd64/sing-box"
+            echo "HIDDIFY=$RUNNER_TEMP/hiddify-core-linux-amd64/hiddify-core"
           } >> "$GITHUB_ENV"
-          printf '| zeptun | %s (Noisemux/zeptun release) |\n| sing-box | %s (sing-tun stack) |\n' "$ZEPTUN_TAG" "$SINGBOX_TAG" >> bench-results/runner.md
+          printf '| zeptun | %s (Noisemux/zeptun release) |\n| sing-box | %s (sing-tun stack) |\n| hiddify-core | %s (hiddify/hiddify-core release, sing-tun stack) |\n' "$ZEPTUN_TAG" "$SINGBOX_TAG" "$HIDDIFY_TAG" >> bench-results/runner.md
           cat bench-results/runner.md
 
       - name: allow unprivileged namespaces
@@ -109,7 +120,7 @@ jobs:
         env:
           SOCKS_SERVER: ${{ runner.temp }}/hev-socks5-server/bin/hev-socks5-server
           IPERF3: /usr/bin/iperf3
-          ENGINES: zeptun-userspace zeptun-hybrid singbox-native
+          ENGINES: zeptun-userspace zeptun-hybrid singbox-native hiddify-native
           SCENARIOS: tcp-up-1 tcp-up-10 tcp-down-1 tcp-down-10 rr rr-8x1k crr udp-100k udp-gso-100k
           DURATION: ${{ inputs.duration || '8' }}
           REPEAT: ${{ inputs.repeat || '2' }}
@@ -121,7 +132,7 @@ jobs:
       - name: footprint
         env:
           SOCKS_SERVER: ${{ runner.temp }}/hev-socks5-server/bin/hev-socks5-server
-          ENGINES: zeptun singbox-native
+          ENGINES: zeptun singbox-native hiddify-native
           TESTS: tcp:1000 udp:1000
           OUT_DIR: footprint-results
         run: sh scripts/footprint_netns.sh
@@ -135,7 +146,7 @@ jobs:
             printf '## Machine\n\n'
             cat bench-results/runner.md
             printf '\n## Method\n\n'
-            printf 'zeptun is the latest release binary of Noisemux/zeptun, and sing-box is the latest 1.15.0 alpha with no tun `stack` option, so it runs on sing-tun'"'"'s own TCP/IP stack. Two network namespaces joined by a veth pair. Traffic enters the tunnel device (MTU 8500), leaves through the same SOCKS5 server (hev-socks5-server) for both engines, and reaches the servers in the second namespace. Engines are interleaved: each round starts every engine once and runs every scenario against it, so background noise spreads evenly. CPU comes from `/proc/<pid>/stat` and memory from `VmRSS`, summed over all processes of an engine.\n\n'
+            printf 'zeptun is the latest release binary of Noisemux/zeptun, and sing-box is the latest 1.15.0 alpha with no tun `stack` option, so it runs on sing-tun'"'"'s own TCP/IP stack. hiddify-core is a release of hiddify/hiddify-core, whose sing-box fork is based on 1.15, running the same config with `srun`. Two network namespaces joined by a veth pair. Traffic enters the tunnel device (MTU 8500), leaves through the same SOCKS5 server (hev-socks5-server) for every engine, and reaches the servers in the second namespace. Engines are interleaved: each round starts every engine once and runs every scenario against it, so background noise spreads evenly. CPU comes from `/proc/<pid>/stat` and memory from `VmRSS`, summed over all processes of an engine.\n\n'
             printf 'Duration %s s per scenario, %s rounds, %s queues. Memory is read twice: the highest sample while the scenario runs, and again after %s s of idle, which shows whether an engine gives the memory back.\n\n' "${DURATION}" "${REPEAT}" "${QUEUES}" "${SETTLE}"
             printf '## Throughput\n\n![throughput](throughput.svg)\n\n'
             printf '## CPU\n\n![cpu](cpu.svg)\n\n'

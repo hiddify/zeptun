@@ -156,12 +156,13 @@ NAMES = {
     "singbox-system": "sing-box system",
     "singbox-gvisor": "sing-box gvisor",
     "singbox-native": "sing-box native",
+    "hiddify-native": "hiddify-core",
     "tun2socks": "tun2socks",
 }
 
 
 def summary(rows, out_dir, dest):
-    wanted = ["zeptun-userspace", "hev", "singbox-native", "singbox-system", "singbox-gvisor", "tun2socks"]
+    wanted = ["zeptun-userspace", "hev", "singbox-native", "hiddify-native", "singbox-system", "singbox-gvisor", "tun2socks"]
 
     def rank(scenario, pick, reverse=True):
         values = {}

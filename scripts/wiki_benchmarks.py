@@ -13,7 +13,7 @@ def section(name):
 
 page = f"""# Benchmarks
 
-Every number here is produced by the `benchmark` workflow in the repository, on a GitHub-hosted runner, comparing the latest zeptun release with sing-box 1.15 on its own TCP/IP stack, over the same SOCKS5 server.
+Every number here is produced by the `benchmark` workflow in the repository, on a GitHub-hosted runner, comparing the latest zeptun release with sing-box 1.15 and hiddify-core, both on sing-tun's own TCP/IP stack, over the same SOCKS5 server.
 
 ## Machine
 

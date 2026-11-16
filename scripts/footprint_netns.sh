@@ -14,6 +14,7 @@ BENCH=$(realpath "${BENCH:-zig-out/bin/zeptun-bench}")
 HEV=${HEV:-}
 TUN2SOCKS=${TUN2SOCKS:-}
 SINGBOX=${SINGBOX:-}
+HIDDIFY=${HIDDIFY:-}
 SOCKS_SERVER=${SOCKS_SERVER:-}
 QUEUES=${QUEUES:-1}
 MTU=${MTU:-8500}
@@ -86,15 +87,20 @@ start_engine() {
             PIDS=$!
             DEV=hev0
             ;;
-        singbox-*)
-            [ -n "$SINGBOX" ] || return 1
-            # singbox-native leaves stack out, so sing-tun uses its own TCP/IP stack (sing-box 1.15+)
-            case "${name#singbox-}" in
-                native) stack= ;;
-                *) stack=",\"stack\":\"${name#singbox-}\"" ;;
+        singbox-*|hiddify-*)
+            # hiddify-core runs a sing-box config with "srun"; its sing-box fork is based on 1.15
+            case "$name" in
+                hiddify-*) bin=$HIDDIFY; cmd=srun ;;
+                *) bin=$SINGBOX; cmd=run ;;
             esac
-            printf '{"log":{"level":"error"},"inbounds":[{"type":"tun","tag":"tun-in","interface_name":"sb0","address":["172.18.0.1/30"],"mtu":%s,"auto_route":false%s}],"outbounds":[{"type":"socks","tag":"proxy","server":"%s","server_port":1080}],"route":{"final":"proxy"}}' "$MTU" "$stack" "$VETH_SERVER" > "$OUT_DIR/singbox.json"
-            "$SINGBOX" run -c "$OUT_DIR/singbox.json" > "$OUT_DIR/singbox.log" 2>&1 &
+            [ -n "$bin" ] || return 1
+            # the native variant leaves stack out, so sing-tun uses its own TCP/IP stack (sing-box 1.15+)
+            case "${name#*-}" in
+                native) stack= ;;
+                *) stack=",\"stack\":\"${name#*-}\"" ;;
+            esac
+            printf '{"log":{"level":"error"},"inbounds":[{"type":"tun","tag":"tun-in","interface_name":"sb0","address":["172.18.0.1/30"],"mtu":%s,"auto_route":false%s}],"outbounds":[{"type":"socks","tag":"proxy","server":"%s","server_port":1080}],"route":{"final":"proxy"}}' "$MTU" "$stack" "$VETH_SERVER" > "$OUT_DIR/$name.json"
+            "$bin" "$cmd" -c "$OUT_DIR/$name.json" > "$OUT_DIR/$name.log" 2>&1 &
             PIDS=$!
             DEV=sb0
             ;;
